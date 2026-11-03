@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Emotion Detection - Welcome</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='landing.css') }}">
+</head>
+<body>
+    <div class="landing-container">
+        <div class="content">
+            <div class="hero-section">
+                <h1 class="title">🎭 Face Emotion Detection</h1>
+                <p class="subtitle">AI-Powered Real-Time Emotion Recognition</p>
+<!--                 
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🤖</span>
+                        <span class="feature-text">Advanced AI Model</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <span class="feature-text">Real-Time Detection</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <span class="feature-text">7 Emotions</span>
+                    </div>
+                </div> -->
+
+                <div class="emotions-preview">
+                    <span class="emotion-badge">😠 Angry</span>
+                    <span class="emotion-badge">🤢 Disgust</span>
+                    <span class="emotion-badge">😨 Fear</span>
+                    <span class="emotion-badge">😊 Happy</span>
+                    <span class="emotion-badge">😐 Neutral</span>
+                    <span class="emotion-badge">😢 Sad</span>
+                    <span class="emotion-badge">😲 Surprise</span>
+                </div>
+
+                <button class="start-button" onclick="startDetection()">
+                    <span class="button-icon">📹</span>
+                    Open Camera & Start Detection
+                </button>
+
+                <div class="info-box">
+                    <p><strong>📌 Note:</strong> This app will request camera access. Please allow it to proceed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startDetection() {
+            // Request camera permissions first
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    // Stop the stream as we just needed permission
+                    stream.getTracks().forEach(track => track.stop());
+                    // Redirect to detection page
+                    window.location.href = '/detect';
+                })
+                .catch(function(err) {
+                    alert('Camera access is required for emotion detection. Please allow camera permissions and try again.');
+                    console.error('Camera access denied:', err);
+                });
+        }
+    </script>
+</body>
+</html>

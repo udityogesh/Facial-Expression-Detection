@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Emotion Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎭 Real-Time Face Emotion Detection</h1>
+            <p>AI-powered emotion recognition using your webcam</p>
+        </header>
+        
+        <main>
+            <div class="video-container">
+                <img src="{{ url_for('video_feed') }}" alt="Video Feed" id="video-feed">
+            </div>
+            
+            <div class="info-panel">
+                <h2>Detected Emotions</h2>
+                <div class="emotions-grid">
+                    <div class="emotion-card">
+                        <span class="emoji">😠</span>
+                        <span class="label">Angry</span>
+                    </div>
+                    <div class="emotion-card">
+                        <span class="emoji">🤢</span>
+                        <span class="label">Disgust</span>
+                    </div>
+                    <div class="emotion-card">
+                        <span class="emoji">😨</span>
+                        <span class="label">Fear</span>
+                    </div>
+                    <div class="emotion-card">
+                        <span class="emoji">😊</span>
+                        <span class="label">Happy</span>
+                    </div>
+                    <div class="emotion-card">
+                        <span class="emoji">😐</span>
+                        <span class="label">Neutral</span>
+                    </div>
+                    <div class="emotion-card">
+                        <span class="emoji">😢</span>
+                        <span class="label">Sad</span>
+                    </div>
+                    <div class="emotion-card">
+                        <span class="emoji">😲</span>
+                        <span class="label">Surprise</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3>Instructions</h3>
+                <ul>
+                    <li>Allow camera access when prompted</li>
+                    <li>Position your face in front of the camera</li>
+                    <li>The model will detect and display your emotion in real-time</li>
+                    <li>Try different facial expressions to see the detection in action</li>
+                </ul>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Powered by TensorFlow & Keras | Built with Flask</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

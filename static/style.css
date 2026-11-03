@@ -1,0 +1,200 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+.back-button {
+    position: absolute;
+    left: 30px;
+    top: 40px;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-5px);
+}
+
+main {
+    padding: 40px;
+}
+
+.video-container {
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 480px;
+}
+
+#video-feed {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.info-panel {
+    margin-bottom: 30px;
+}
+
+.info-panel h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.emotions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.emotion-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.emotion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.emotion-card .emoji {
+    font-size: 2.5em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.emotion-card .label {
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.instructions {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.instructions h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.instructions ul {
+    list-style-position: inside;
+    color: #555;
+    line-height: 1.8;
+}
+
+.instructions li {
+    margin-bottom: 8px;
+}
+
+footer {
+    background: #2d3748;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+    
+    header p {
+        font-size: 1em;
+    }
+    
+    main {
+        padding: 20px;
+    }
+    
+    .emotions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 10px;
+    }
+    
+    .emotion-card {
+        padding: 15px;
+    }
+    
+    .emotion-card .emoji {
+        font-size: 2em;
+    }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.video-container::before {
+    content: 'Loading camera...';
+    position: absolute;
+    color: white;
+    font-size: 1.2em;
+    animation: pulse 2s infinite;
+}
