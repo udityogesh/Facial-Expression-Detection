@@ -1,40 +1,39 @@
-# Configuration file for the application
+"""Environment-based Flask configuration."""
 
 import os
+from datetime import timedelta
+
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 class Config:
-    """Base configuration"""
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-please-change'
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
-    
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "").lower() == "true"
+    PERMANENT_SESSION_LIFETIME = timedelta(days=30)
+
+
 class DevelopmentConfig(Config):
-    """Development configuration"""
     DEBUG = True
-    FLASK_ENV = 'development'
+
 
 class ProductionConfig(Config):
-    """Production configuration"""
     DEBUG = False
-    FLASK_ENV = 'production'
-    
-    # Override SECRET_KEY requirement in production
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise ValueError("SECRET_KEY environment variable must be set in production")
+    SESSION_COOKIE_SECURE = True
+
 
 class TestingConfig(Config):
-    """Testing configuration"""
     TESTING = True
-    DEBUG = True
+    WTF_CSRF_ENABLED = True
 
-# Configuration dictionary
 config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'testing': TestingConfig,
-    'default': DevelopmentConfig
+    "development": DevelopmentConfig,
+    "production": ProductionConfig,
+    "testing": TestingConfig,
+    "default": DevelopmentConfig,
 }

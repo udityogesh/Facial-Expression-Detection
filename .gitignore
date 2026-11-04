@@ -62,3 +62,4 @@ Thumbs.db
 instance/
 .pytest_cache/
 .ipynb_checkpoints/
+training_output/

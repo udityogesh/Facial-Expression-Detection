@@ -8,6 +8,9 @@ A local-only web application for real-time face emotion detection using Flask, T
 - 🌐 Web-based interface accessible from your local browser
 - 🎨 Clean, modern UI with landing page
 - 📊 Detects 7 emotions: Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise
+- 🔐 Optional account and role-management backend
+- 📈 Personal dashboards, detection history, and analytics
+- 🛡️ Administrator account management
 - 🚀 Error handling and logging
 - 📱 Mobile responsive design
 - 💻 Local-only application - runs on your computer
@@ -39,8 +42,14 @@ chmod +x start.sh
 python app.py
 ```
 
-3. **Access the app**
-Open your browser and navigate to: `http://localhost:5000`
+3. **Open the application**
+Open `http://localhost:5000/` for the landing page or go directly to `http://localhost:5000/detect`. Sign-in and sign-up pages are intentionally not included; camera detection works without an account.
+
+To use the retained administrator/dashboard backend, create the initial administrator:
+```powershell
+python -m flask --app app create-admin
+```
+The command prompts for the administrator's name, username, email, and password. Passwords must be at least 12 characters and include uppercase, lowercase, a number, and a symbol. To bootstrap from environment variables instead, set `ADMIN_FULL_NAME`, `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` for this command only, then remove `ADMIN_PASSWORD`.
 
 **Note:** This is a local-only application designed to run on your computer. You can also access it from other devices on your local network using `http://YOUR_IP:5000`
 
@@ -55,8 +64,9 @@ Open your browser and navigate to: `http://localhost:5000`
 
 ```
 .
-├── app.py                    # Main Flask application
-├── config.py                 # Configuration management
+├── app.py                    # Flask routes, authentication, and preserved inference pipeline
+├── config.py                 # Environment-based configuration
+├── models.py                 # SQLAlchemy user, session, and detection models
 ├── emotiondetector.json      # Model architecture
 ├── emotiondetector.h5        # Trained model weights
 ├── requirements.txt          # Python dependencies
@@ -67,8 +77,10 @@ Open your browser and navigate to: `http://localhost:5000`
 ├── QUICKSTART.md           # Quick start guide
 ├── PROJECT_SUMMARY.md      # Project overview
 ├── templates/
-│   ├── landing.html        # Landing page with camera access
-│   └── detect.html         # Live detection page
+│   ├── landing.html        # Public product landing page
+│   ├── dashboard/          # User overview, history, analytics, profile
+│   ├── admin/              # Administrator dashboard and user management
+│   └── detection.html      # Browser camera and live prediction interface
 ├── static/
 │   ├── landing.css         # Landing page styles
 │   ├── style.css           # Detection page styles
@@ -80,11 +92,27 @@ Open your browser and navigate to: `http://localhost:5000`
 
 ## 🎯 Usage
 
-1. **Landing Page**: Visit the home page and click "Open Camera & Start Detection"
-2. **Camera Permission**: Allow camera access when prompted by your browser
-3. **Detection**: The app automatically redirects to the live detection page
-4. **Real-time Analysis**: Watch as emotions are detected and labeled in real-time
-5. **Try Expressions**: Make different facial expressions to see the AI in action
+1. Open the landing page and select **Start detection**.
+2. Allow browser camera access.
+3. Start the camera. Frames are processed using the existing Keras model and its current class mapping.
+4. View live predictions, confidence scores, and bounding boxes. Predictions remain in the page for the current browser session.
+
+## Authentication and database
+
+- SQLite is created automatically at `instance/face_emotion_detection.db` the first time the app starts. Set `DATABASE_URL` to use another SQLAlchemy-supported database URL.
+- User passwords are stored as Werkzeug password hashes. Public registration always creates an active `NORMAL_USER`; only the `create-admin` CLI command creates administrators.
+- Sign-in and sign-up screens are not part of the current UI. Anonymous visitors can use live detection; their predictions are not saved to account history. The account/dashboard backend remains available for existing authenticated sessions and future UI integration.
+- Forms and state-changing APIs use session-bound CSRF tokens. Login is limited to five failed attempts per IP per 15 minutes using shared SQLite records. Sessions expire after 12 hours by default (30 days with Remember Me), and protected pages check roles on the server.
+- Detection history is filtered by the authenticated user. Administrators can inspect account records and activate or deactivate accounts.
+- Browser camera frames are sent to the Flask server for prediction but are not stored. Anonymous predictions are not persisted.
+- Email-based password reset is not configured. Users who lose access must contact an administrator.
+
+For production, set a randomly generated `SECRET_KEY`, set `FLASK_ENV=production`, and serve the app over HTTPS. Production mode enables secure session cookies. The development default is generated at process startup; set a persistent secret if you need sessions to survive application restarts.
+
+Example secret generation in PowerShell:
+```powershell
+python -c "import secrets; print(secrets.token_hex(32))"
+```
 
 ## ⚙️ Configuration
 
@@ -119,6 +147,23 @@ python app.py
 python test_app.py
 ```
 
+### Fine-tune the emotion model
+
+The optional training script fine-tunes the existing model using only `images/train`.
+It creates a stratified validation split, applies class weights and light training-only
+augmentation, and stops when validation loss stops improving. The separate `images/test`
+set is used only for the final evaluation.
+
+Run from the project directory:
+
+```powershell
+.\.venv\Scripts\python.exe train_improved.py
+```
+
+Training runs on the available TensorFlow device and may take a long time on CPU.
+Candidate model files and test metrics are written to `training_output/`; the model
+currently used by the app is not overwritten.
+
 ## 📊 Model Information
 
 - **Architecture**: Convolutional Neural Network (CNN)
@@ -135,9 +180,21 @@ python test_app.py
 
 ## 📝 API Endpoints
 
-- `GET /` - Landing page
-- `GET /detect` - Detection page
-- `GET /video_feed` - Video stream endpoint
+- `GET /` - Public landing page
+- `GET /signup`, `GET /login` - Redirect to the public landing page (no auth screens)
+- `POST /signup`, `POST /login` - Retained account backend endpoints
+- `POST /logout` - Sign out
+- `GET /dashboard` - Authenticated user dashboard
+- `GET /detect` - Public live detection page
+- `POST /api/detection/sessions` - Start a detection session
+- `POST /api/detection` - Process a camera frame using the existing model
+- `POST /api/detection/sessions/<id>/stop` - End a detection session
+- `GET /api/detection/history` - Return the authenticated user's paginated history
+- `GET /history`, `GET /analytics`, `GET|POST /profile` - Personal account pages
+- `GET /settings`, `GET|PUT /api/profile`, `POST /api/change-password` - Account settings and password changes
+- `GET /admin/dashboard`, `GET /admin/users` - Administrator-only pages
+- `POST /admin/users/<id>/activate` and `/deactivate` - Administrator-only status changes
+- `GET /video_feed` - Server webcam stream for existing clients
 - `GET /health` - Health check endpoint
 
 ### Health Check Example

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}Face Emotion Detection AI{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css', v='20261104') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="app-shell">
+    {% if current_user %}
+    <aside class="sidebar" id="sidebar">
+        <a class="brand" href="{{ url_for('admin_dashboard' if current_user.role == 'ADMIN' else 'dashboard') }}">
+            <span class="brand-mark">FE</span>
+            <span>Emotion<span class="brand-light">AI</span></span>
+        </a>
+        <p class="nav-caption">WORKSPACE</p>
+        <nav class="side-nav" aria-label="Main navigation">
+            {% if current_user.role == 'ADMIN' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' else '' }}"><i data-lucide="layout-dashboard"></i>Overview</a>
+            <a href="{{ url_for('admin_users') }}" class="{{ 'active' if request.endpoint in ['admin_users', 'admin_user_detail'] else '' }}"><i data-lucide="users"></i>Users</a>
+            {% else %}
+            <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' else '' }}"><i data-lucide="layout-dashboard"></i>Overview</a>
+            <a href="{{ url_for('detect') }}" class="{{ 'active' if request.endpoint in ['detect', 'detection_page'] else '' }}"><i data-lucide="scan-face"></i>Emotion detection</a>
+            <a href="{{ url_for('history') }}" class="{{ 'active' if request.endpoint == 'history' else '' }}"><i data-lucide="history"></i>Detection history</a>
+            <a href="{{ url_for('analytics') }}" class="{{ 'active' if request.endpoint == 'analytics' else '' }}"><i data-lucide="chart-no-axes-column-increasing"></i>Analytics</a>
+            {% endif %}
+        </nav>
+        <p class="nav-caption nav-caption-account">ACCOUNT</p>
+        <nav class="side-nav" aria-label="Account navigation">
+            <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint == 'profile' else '' }}"><i data-lucide="user-round"></i>My profile</a>
+            <a href="{{ url_for('settings') }}" class="{{ 'active' if request.endpoint == 'settings' else '' }}"><i data-lucide="settings-2"></i>Settings</a>
+            <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"><i data-lucide="log-out"></i>Sign out</button>
+            </form>
+        </nav>
+        <div class="sidebar-user">
+            <span class="avatar">{{ current_user.full_name[:1]|upper }}</span>
+            <span class="sidebar-user-text"><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role|replace('_', ' ')|title }}</small></span>
+        </div>
+    </aside>
+    {% endif %}
+    <div class="{{ 'app-main' if current_user else 'public-main' }}">
+        {% if current_user %}
+        <header class="topbar">
+            <button type="button" class="mobile-menu" id="mobile-menu" aria-label="Toggle navigation"><i data-lucide="menu"></i></button>
+            <span class="topbar-label">{% block page_label %}Workspace{% endblock %}</span>
+            <div class="topbar-actions">
+                <span class="notification-indicator" title="No new notifications" aria-label="No new notifications"><i data-lucide="bell"></i></span>
+                <details class="account-menu">
+                    <summary><span class="topbar-name">{{ current_user.full_name }}</span><span class="avatar avatar-small">{{ current_user.full_name[:1]|upper }}</span><i data-lucide="chevron-down"></i></summary>
+                    <div class="account-dropdown">
+                        <a href="{{ url_for('profile') }}"><i data-lucide="user-round"></i>My profile</a>
+                        <form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit"><i data-lucide="log-out"></i>Sign out</button></form>
+                    </div>
+                </details>
+            </div>
+        </header>
+        {% endif %}
+        <main class="page-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-stack" aria-live="polite">
+                    {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script src="https://unpkg.com/lucide@0.468.0"></script>
+    <script>
+        if (window.lucide) lucide.createIcons();
+        const menuButton = document.getElementById('mobile-menu');
+        if (menuButton) menuButton.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('sidebar-open'));
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -26,6 +26,7 @@ def test_template_files_exist():
     """Test that template files exist"""
     assert os.path.exists("templates/landing.html"), "Landing page template not found"
     assert os.path.exists("templates/detect.html"), "Detection page template not found"
+    assert os.path.exists("templates/dashboard/index.html"), "Dashboard template not found"
 
 def test_static_files_exist():
     """Test that static files exist"""
@@ -91,10 +92,28 @@ def test_landing_page():
         assert b'Face Emotion Detection' in response.data
 
 def test_detect_page():
-    """Test that detect page loads"""
+    """Detection page is available without signing in."""
     from app import app
     
     with app.test_client() as client:
         response = client.get('/detect')
         assert response.status_code == 200
-        assert b'Real-Time Face Emotion Detection' in response.data
+        assert b'Emotion detection' in response.data
+        assert b'Start camera' in response.data
+
+
+def test_landing_page_has_no_signin_or_signup_links():
+    from app import app
+
+    with app.test_client() as client:
+        response = client.get("/")
+        assert response.status_code == 200
+        assert b"Start detection" in response.data
+        assert b"Sign in" not in response.data
+        assert b"Create account" not in response.data
+
+
+if __name__ == "__main__":
+    import pytest
+
+    raise SystemExit(pytest.main([__file__]))

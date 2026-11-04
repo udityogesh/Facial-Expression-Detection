@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}User details · EmotionAI{% endblock %}
+{% block page_label %}User details{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ACCOUNT DETAILS</p><h1>{{ account.full_name }}</h1><p>Registered {{ account.created_at.strftime('%B %d, %Y') }} · {{ account.role|replace('_', ' ')|title }}</p></div><a class="button button-secondary" href="{{ url_for('admin_users') }}">Back to users</a></div>
+<div class="profile-grid">
+    <section class="panel profile-card"><div class="profile-identity"><span class="avatar avatar-large">{{ account.full_name[:1]|upper }}</span><div><h2>{{ account.full_name }}</h2><p>{{ account.username }} · {{ account.email }}</p></div></div>
+        <div class="profile-stat"><span>Account status</span><strong>{{ account.account_status|title }}</strong></div>
+        <div class="profile-stat"><span>Role</span><strong>{{ account.role|replace('_', ' ')|title }}</strong></div>
+        <div class="profile-stat"><span>Detection sessions</span><strong>{{ data.session_count }}</strong></div>
+        <div class="profile-stat"><span>Faces analyzed</span><strong>{{ data.face_count }}</strong></div>
+    </section>
+    <section class="panel recent-panel"><div class="panel-title"><div><h2>Recent predictions</h2><p>Account activity</p></div></div>
+        {% if data.recent %}<div class="table-wrap"><table><thead><tr><th>Emotion</th><th>Confidence</th><th>Date</th></tr></thead><tbody>{% for item in data.recent %}<tr><td>{{ item.detected_emotion|title }}</td><td>{{ '%.1f'|format(item.confidence_score * 100) }}%</td><td>{{ item.detection_timestamp.strftime('%b %d, %Y · %I:%M %p') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state compact"><span>No detections recorded for this account.</span></div>{% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Detection history · EmotionAI{% endblock %}
+{% block page_label %}Detection history{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PERSONAL RECORDS</p><h1>Detection history</h1><p>Your private record of emotion predictions.</p></div><a class="button button-primary" href="{{ url_for('detect') }}"><i data-lucide="scan-face"></i>New detection</a></div>
+<section class="panel recent-panel">
+{% if pagination.items %}
+<div class="table-wrap"><table><thead><tr><th>Expression</th><th>Confidence</th><th>Session</th><th>Date and time</th></tr></thead><tbody>
+{% for item in pagination.items %}<tr><td><span class="emotion-tag">{{ item.detected_emotion|title }}</span></td><td>{{ '%.1f'|format(item.confidence_score * 100) }}%</td><td><code>{{ item.session_id[:8] }}</code></td><td>{{ item.detection_timestamp.strftime('%b %d, %Y · %I:%M %p') }}</td></tr>{% endfor %}
+</tbody></table></div>
+<nav class="pagination" aria-label="History pages">{% if pagination.has_prev %}<a href="{{ url_for('history', page=pagination.prev_num) }}">Previous</a>{% endif %}<span>Page {{ pagination.page }} of {{ pagination.pages }}</span>{% if pagination.has_next %}<a href="{{ url_for('history', page=pagination.next_num) }}">Next</a>{% endif %}</nav>
+{% else %}<div class="empty-state compact"><span>No records found. Your prediction history will appear here.</span><a href="{{ url_for('detect') }}">Start detection</a></div>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}User management · EmotionAI{% endblock %}
+{% block page_label %}User management{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ACCOUNT ADMINISTRATION</p><h1>Registered users</h1><p>Review accounts and control their access to the application.</p></div><div class="user-filters"><input class="user-search" id="user-search" type="search" placeholder="Search name, username or email" aria-label="Search users"><select class="user-search" id="user-role-filter" aria-label="Filter users by role"><option value="">All roles and statuses</option><option value="active">Active accounts</option><option value="inactive">Inactive accounts</option><option value="normal user">Normal users</option><option value="admin">Administrators</option></select></div></div>
+<section class="panel recent-panel">
+    <div class="table-wrap"><table id="users-table"><thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Registered</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    {% for user in users %}<tr data-user-row data-status="{{ user.account_status|lower }}" data-role="{{ user.role|replace('_', ' ')|lower }}"><td>{{ user.id }}</td><td>{{ user.full_name }}</td><td>{{ user.username }}</td><td>{{ user.email }}</td><td>{{ user.role|replace('_', ' ')|title }}</td><td>{{ user.created_at.strftime('%b %d, %Y') }}</td><td><span class="status-tag {{ 'status-active' if user.account_status == 'ACTIVE' else 'status-inactive' }}">{{ user.account_status|title }}</span></td><td><span class="table-action"><a href="{{ url_for('admin_user_detail', user_id=user.id) }}">View</a>{% if user.account_status == 'ACTIVE' %}<form action="{{ url_for('admin_user_status', user_id=user.id, action='deactivate') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Deactivate</button></form>{% else %}<form action="{{ url_for('admin_user_status', user_id=user.id, action='activate') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Activate</button></form>{% endif %}</span></td></tr>{% endfor %}
+    </tbody></table></div>
+    {% if not users %}<div class="empty-state compact"><span>No registered users yet.</span></div>{% endif %}
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='dashboard.js', v='20261104') }}" defer></script>{% endblock %}

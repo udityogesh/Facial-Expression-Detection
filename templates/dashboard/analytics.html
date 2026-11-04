@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Analytics · EmotionAI{% endblock %}
+{% block page_label %}Analytics{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">YOUR INSIGHTS</p><h1>Emotion analytics</h1><p>Explore your recorded expression patterns and detection activity.</p></div><a class="button button-secondary" href="{{ url_for('history') }}">View history</a></div>
+{% if data.detection_count %}
+<section class="content-grid analytics-grid">
+    <article class="panel chart-panel"><div class="panel-title"><div><h2>Emotion distribution</h2><p>All recorded predictions</p></div></div><div class="chart-wrap chart-wrap-large"><canvas id="emotion-chart"></canvas></div></article>
+    <article class="panel chart-panel"><div class="panel-title"><div><h2>Detection activity</h2><p>Daily predictions in the last seven days</p></div></div><div class="chart-wrap chart-wrap-large"><canvas id="activity-chart"></canvas></div></article>
+</section>
+<section class="panel recent-panel"><div class="panel-title"><div><h2>Most frequently detected</h2><p>Ranked by your recorded predictions</p></div></div>
+<div class="ranking-list">{% for emotion, count in data.emotion_counts|dictsort(by='value', reverse=true) %}<div class="ranking-row"><span class="ranking-name">{{ emotion|title }}</span><div class="ranking-track"><span style="width: {{ (count / data.detection_count * 100)|round(1) }}%"></span></div><strong>{{ count }}</strong></div>{% endfor %}</div></section>
+{% else %}
+<section class="panel empty-large"><i data-lucide="chart-no-axes-column-increasing"></i><h2>Your analytics are waiting</h2><p>Run a detection session and your personal charts will appear here.</p><a class="button button-primary" href="{{ url_for('detect') }}">Start detection</a></section>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if data.detection_count %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script><script>window.dashboardCharts = {{ {'emotions': data.emotion_counts, 'activity': data.activity}|tojson }};</script><script src="{{ url_for('static', filename='dashboard.js', v='20261104') }}" defer></script>{% endif %}{% endblock %}

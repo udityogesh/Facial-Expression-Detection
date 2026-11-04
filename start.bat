@@ -1,9 +1,11 @@
 @echo off
 REM Startup script for Face Emotion Detection App (Windows)
+setlocal
+cd /d "%~dp0"
 
 echo Starting Face Emotion Detection Application...
 
-set "VENV_DIR=%LOCALAPPDATA%\FaceEmotionDetection\venv"
+set "VENV_DIR=%~dp0.venv"
 
 REM Check if virtual environment exists
 if not exist "%VENV_DIR%\" (
@@ -15,22 +17,9 @@ if not exist "%VENV_DIR%\" (
     )
 )
 
-REM Activate virtual environment
-echo Activating virtual environment...
-call "%VENV_DIR%\Scripts\activate.bat"
-if errorlevel 1 (
-    echo Error: Failed to activate virtual environment.
-    exit /b 1
-)
-
-REM Install/Update dependencies
+REM Install project dependencies into this project's environment
 echo Installing dependencies...
-python -m pip install --upgrade pip
-if errorlevel 1 (
-    echo Error: Failed to upgrade pip.
-    exit /b 1
-)
-python -m pip install -r requirements.txt
+"%VENV_DIR%\Scripts\python.exe" -m pip install -r requirements.txt
 if errorlevel 1 (
     echo Error: Failed to install project dependencies.
     exit /b 1
@@ -53,7 +42,7 @@ REM Create .env if it doesn't exist
 if not exist ".env" (
     echo Creating .env file from template...
     copy .env.example .env
-    echo Please update .env file with your configuration!
+    echo A local .env file was created. Set a persistent SECRET_KEY before deployment.
 )
 
 REM Set environment variables if not already set
@@ -62,8 +51,10 @@ if "%PORT%"=="" set PORT=5000
 
 REM Start the application
 echo Starting application on port %PORT%...
-echo Access the app at: http://localhost:%PORT%
+echo Landing page: http://localhost:%PORT%/
+echo Detection:    http://localhost:%PORT%/detect
 echo Press CTRL+C to stop the server
 echo.
 
-python app.py
+"%VENV_DIR%\Scripts\python.exe" app.py
+endlocal

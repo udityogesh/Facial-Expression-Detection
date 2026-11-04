@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Admin overview · EmotionAI{% endblock %}
+{% block page_label %}Admin overview{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">SYSTEM OVERVIEW</p><h1>Administrator dashboard</h1><p>Monitor registered accounts and system-wide detection activity.</p></div><a class="button button-primary" href="{{ url_for('admin_users') }}"><i data-lucide="users"></i>Manage users</a></div>
+<section class="stats-grid admin-stats">
+    <article class="stat-card"><span class="stat-icon violet"><i data-lucide="users"></i></span><p>Registered users</p><strong>{{ total_users }}</strong><small>All accounts</small></article>
+    <article class="stat-card"><span class="stat-icon green"><i data-lucide="user-check"></i></span><p>Active users</p><strong>{{ active_users }}</strong><small>Can sign in</small></article>
+    <article class="stat-card"><span class="stat-icon cyan"><i data-lucide="user-x"></i></span><p>Inactive users</p><strong>{{ inactive_users }}</strong><small>Access disabled</small></article>
+    <article class="stat-card"><span class="stat-icon blue"><i data-lucide="layers-3"></i></span><p>Detection sessions</p><strong>{{ session_count }}</strong><small>Across the system</small></article>
+</section>
+<section class="content-grid admin-grid">
+    <article class="panel"><div class="panel-title"><div><h2>System emotion distribution</h2><p>Recorded predictions across all accounts</p></div></div>
+        {% if emotion_counts %}<div class="admin-emotions">{% for emotion, count in emotion_counts.items() %}<div class="admin-emotion-row"><span>{{ emotion|title }}</span><strong>{{ count }}</strong></div>{% endfor %}</div>{% else %}<div class="empty-state compact"><span>No detection data has been recorded.</span></div>{% endif %}
+    </article>
+    <article class="panel"><div class="panel-title"><div><h2>Recent registrations</h2><p>Newest accounts in the system</p></div><a href="{{ url_for('admin_users') }}">All users <i data-lucide="arrow-up-right"></i></a></div>
+        {% if recent_users %}<div class="table-wrap"><table><thead><tr><th>User</th><th>Status</th></tr></thead><tbody>{% for user in recent_users %}<tr><td><a href="{{ url_for('admin_user_detail', user_id=user.id) }}">{{ user.full_name }}</a><br><small>{{ user.email }}</small></td><td><span class="status-tag {{ 'status-active' if user.account_status == 'ACTIVE' else 'status-inactive' }}">{{ user.account_status|title }}</span></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state compact"><span>No accounts registered yet.</span></div>{% endif %}
+    </article>
+</section>
+<section class="panel recent-panel"><div class="panel-title"><div><h2>User registrations</h2><p>New accounts by day over the last seven days</p></div></div><div class="chart-wrap chart-wrap-small"><canvas id="registration-chart" aria-label="User registration activity chart"></canvas></div></section>
+<section class="panel recent-panel"><div class="panel-title"><div><h2>Recent system activity</h2><p>Latest predictions from all users</p></div></div>
+{% if activity %}<div class="table-wrap"><table><thead><tr><th>User</th><th>Expression</th><th>Confidence</th><th>Date and time</th></tr></thead><tbody>{% for item in activity %}<tr><td>{{ item.user.full_name }}</td><td><span class="emotion-tag">{{ item.detected_emotion|title }}</span></td><td>{{ '%.1f'|format(item.confidence_score * 100) }}%</td><td>{{ item.detection_timestamp.strftime('%b %d, %Y · %I:%M %p') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state compact"><span>No recent detections.</span></div>{% endif %}
+</section>
+{% endblock %}
+{% block scripts %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script><script>window.adminCharts = {{ {'registrations': registration_activity}|tojson }};</script><script src="{{ url_for('static', filename='dashboard.js', v='20261104') }}" defer></script>{% endblock %}

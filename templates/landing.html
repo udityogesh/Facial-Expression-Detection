@@ -1,70 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Emotion Detection - Welcome</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='landing.css') }}">
-</head>
-<body>
-    <div class="landing-container">
-        <div class="content">
-            <div class="hero-section">
-                <h1 class="title">🎭 Face Emotion Detection</h1>
-                <p class="subtitle">AI-Powered Real-Time Emotion Recognition</p>
-<!--                 
-                <div class="features">
-                    <div class="feature-item">
-                        <span class="feature-icon">🤖</span>
-                        <span class="feature-text">Advanced AI Model</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">⚡</span>
-                        <span class="feature-text">Real-Time Detection</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🎯</span>
-                        <span class="feature-text">7 Emotions</span>
-                    </div>
-                </div> -->
-
-                <div class="emotions-preview">
-                    <span class="emotion-badge">😠 Angry</span>
-                    <span class="emotion-badge">🤢 Disgust</span>
-                    <span class="emotion-badge">😨 Fear</span>
-                    <span class="emotion-badge">😊 Happy</span>
-                    <span class="emotion-badge">😐 Neutral</span>
-                    <span class="emotion-badge">😢 Sad</span>
-                    <span class="emotion-badge">😲 Surprise</span>
-                </div>
-
-                <button class="start-button" onclick="startDetection()">
-                    <span class="button-icon">📹</span>
-                    Open Camera & Start Detection
-                </button>
-
-                <div class="info-box">
-                    <p><strong>📌 Note:</strong> This app will request camera access. Please allow it to proceed.</p>
-                </div>
-            </div>
-        </div>
+{% extends "base.html" %}
+{% block title %}Face Emotion Detection AI{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='landing.css', v='20261104') }}">{% endblock %}
+{% block content %}
+<header class="landing-nav">
+    <a class="landing-brand" href="{{ url_for('index') }}"><span class="brand-mark">FE</span><span>Emotion<span>AI</span></span></a>
+    <nav aria-label="Landing page navigation">
+        <a href="#home">Home</a><a href="#features">Features</a><a href="#about">About</a>
+    </nav>
+    <div class="landing-actions">
+        {% if current_user %}
+        <a class="nav-create" href="{{ url_for('dashboard') }}">Open dashboard</a>
+        {% else %}
+        <a class="nav-create" href="{{ url_for('detect') }}">Start detection</a>
+        {% endif %}
     </div>
-
-    <script>
-        function startDetection() {
-            // Request camera permissions first
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    // Stop the stream as we just needed permission
-                    stream.getTracks().forEach(track => track.stop());
-                    // Redirect to detection page
-                    window.location.href = '/detect';
-                })
-                .catch(function(err) {
-                    alert('Camera access is required for emotion detection. Please allow camera permissions and try again.');
-                    console.error('Camera access denied:', err);
-                });
-        }
-    </script>
-</body>
-</html>
+</header>
+<div class="landing-page">
+    <section class="landing-hero" id="home">
+        <div class="hero-copy">
+            <p class="landing-eyebrow"><span></span> AI-POWERED FACIAL ANALYSIS</p>
+            <h1>Face Emotion<br><span>Detection AI</span></h1>
+            <p class="hero-tagline">Understanding Human Emotions Through Artificial Intelligence.</p>
+            <p class="hero-description">Explore real-time facial expression recognition with the project's trained deep learning model. Allow camera access and see predictions directly in your browser.</p>
+            <div class="hero-buttons"><a class="landing-cta" href="{{ url_for('detect') }}">Start detection <i data-lucide="arrow-up-right"></i></a><a class="landing-secondary" href="#features">Explore features</a></div>
+            <div class="hero-proof"><span><i data-lucide="camera"></i>Camera starts on your request</span><span><i data-lucide="activity"></i>Live model predictions</span></div>
+        </div>
+        <div class="hero-visual" aria-label="Abstract facial expression analysis illustration">
+            <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+            <div class="face-card">
+                <div class="face-label"><span class="scanning-dot"></span> MODEL READY <span>LIVE ANALYSIS</span></div>
+                <div class="face-outline"><span class="eye eye-left"></span><span class="eye eye-right"></span><span class="nose"></span><span class="mouth"></span><span class="face-scan"></span><span class="corner corner-tl"></span><span class="corner corner-tr"></span><span class="corner corner-bl"></span><span class="corner corner-br"></span></div>
+                <div class="expression-readout"><span><small>EXPRESSION SET</small><strong>7 classes</strong></span><i data-lucide="scan-face"></i></div>
+            </div>
+            <div class="float-chip chip-top"><i data-lucide="sparkles"></i><span>Deep learning<br><strong>Inference</strong></span></div>
+            <div class="float-chip chip-bottom"><span class="chip-pulse"></span><span>Camera input<br><strong>Ready when you are</strong></span></div>
+        </div>
+    </section>
+    <section class="feature-section" id="features">
+        <div class="section-heading"><p class="landing-eyebrow">BUILT FOR INSIGHT</p><h2>Everything you need to explore expressions.</h2><p>A streamlined experience from live detection to personal analytics.</p></div>
+        <div class="feature-grid">
+            <article class="feature-card"><span class="feature-icon purple"><i data-lucide="scan-face"></i></span><h3>Real-time recognition</h3><p>Analyze camera frames live and view the model's predicted expression and confidence.</p></article>
+            <article class="feature-card"><span class="feature-icon blue"><i data-lucide="brain-circuit"></i></span><h3>Deep learning model</h3><p>Uses the project's existing trained model and facial preprocessing pipeline.</p></article>
+            <article class="feature-card"><span class="feature-icon cyan"><i data-lucide="scan"></i></span><h3>Seven expression classes</h3><p>Recognizes the emotion labels supported by the existing model.</p></article>
+            <article class="feature-card"><span class="feature-icon green"><i data-lucide="scan-line"></i></span><h3>Face location overlay</h3><p>See the detected face highlighted in the live camera preview.</p></article>
+            <article class="feature-card"><span class="feature-icon pink"><i data-lucide="lock-keyhole"></i></span><h3>On-demand camera</h3><p>Your browser camera is requested only when you choose to start detection.</p></article>
+        </div>
+    </section>
+    <section class="about-section" id="about"><div class="about-mark"><span class="brand-mark">FE</span></div><div><p class="landing-eyebrow">ABOUT THE PROJECT</p><h2>AI research, made approachable.</h2><p>Face Emotion Detection AI combines a Flask application, computer vision and the existing trained Keras model to demonstrate facial expression classification.</p></div><a href="{{ url_for('detect') }}">Try detection <i data-lucide="arrow-right"></i></a></section>
+</div>
+<footer class="landing-footer"><a class="landing-brand" href="{{ url_for('index') }}"><span class="brand-mark">FE</span><span>Emotion<span>AI</span></span></a><span>Face Emotion Detection AI · Flask, TensorFlow and OpenCV</span></footer>
+{% endblock %}

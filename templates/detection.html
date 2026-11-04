@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Emotion detection · EmotionAI{% endblock %}
+{% block page_label %}Emotion detection{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">LIVE ANALYSIS</p><h1>Emotion detection</h1><p>Your camera frames are analyzed using the existing trained model.</p></div><span class="privacy-pill"><i data-lucide="lock-keyhole"></i>Camera starts on your request</span></div>
+<div class="detection-layout">
+    <section class="panel camera-panel">
+        <div class="panel-title"><div><h2>Camera preview</h2><p>Center your face and use even lighting.</p></div><span class="camera-status" id="camera-status">Camera stopped</span></div>
+        <div class="camera-stage" id="camera-stage">
+            <video id="camera-video" autoplay playsinline muted></video>
+            <canvas id="camera-overlay"></canvas>
+            <div class="camera-placeholder" id="camera-placeholder"><i data-lucide="scan-face"></i><strong>Camera is ready</strong><span>Start the camera when you are ready to begin.</span></div>
+        </div>
+        <div class="camera-controls"><button class="button button-primary" id="start-camera" type="button"><i data-lucide="video"></i>Start camera</button><button class="button button-secondary" id="capture-frame" type="button" disabled><i data-lucide="scan"></i>Analyze frame</button><button class="button button-quiet" id="stop-camera" type="button" disabled><i data-lucide="video-off"></i>Stop</button></div>
+        <p class="camera-message" id="camera-message" aria-live="polite">Camera access is requested only after you press Start camera.</p>
+    </section>
+    <aside class="panel result-panel">
+        <div class="panel-title"><div><h2>Detection result</h2><p>Latest prediction from your camera.</p></div></div>
+        <div class="result-empty" id="result-empty"><i data-lucide="scan"></i><strong>Waiting for a face</strong><span>Your result will appear here.</span></div>
+        <div class="result-content" id="result-content" hidden><span class="result-overline">PREDICTED EXPRESSION</span><strong class="result-emotion" id="result-emotion">—</strong><div class="confidence-row"><span>Model confidence</span><strong id="result-confidence">—</strong></div><div class="confidence-track"><span id="confidence-bar"></span></div><p class="result-time" id="result-time"></p></div>
+        <div class="recent-predictions"><h3>Recent predictions</h3><div id="recent-predictions" class="recent-list"><p>No predictions yet.</p></div></div>
+    </aside>
+</div>
+<section class="panel detection-note"><i data-lucide="info"></i><p>Predictions are shown in this page while detection is active. Camera frames are processed to make predictions and are not stored.</p></section>
+<canvas id="capture-canvas" hidden></canvas>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='detection.js', v='20261104') }}" defer></script>{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My profile · EmotionAI{% endblock %}
+{% block page_label %}My profile{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ACCOUNT SETTINGS</p><h1>My profile</h1><p>Manage your personal information and account security.</p></div></div>
+{% if errors %}<div class="form-alert light-alert" role="alert"><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
+<div class="profile-grid">
+    <section class="panel profile-card"><div class="profile-identity"><span class="avatar avatar-large">{{ current_user.full_name[:1]|upper }}</span><div><h2>{{ current_user.full_name }}</h2><p>{{ current_user.role|replace('_', ' ')|title }} · Joined {{ current_user.created_at.strftime('%b %Y') }}</p></div></div>
+        <div class="profile-stat"><span>Total detection sessions</span><strong>{{ data.session_count }}</strong></div>
+        <div class="profile-stat"><span>Faces analyzed</span><strong>{{ data.face_count }}</strong></div>
+    </section>
+    <section class="panel form-panel"><h2>Personal information</h2><p>Update your account details. Your role is managed by an administrator.</p>
+        <form method="post" class="light-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Full name<input name="full_name" value="{{ current_user.full_name }}" maxlength="120" required></label>
+            <label>Username<input name="username" value="{{ current_user.username }}" maxlength="40" required></label>
+            <label>Email address<input name="email" type="email" value="{{ current_user.email }}" maxlength="254" required></label>
+            <label>Account role<input value="{{ current_user.role|replace('_', ' ')|title }}" disabled></label>
+            <button class="button button-primary" type="submit">Save changes</button>
+        </form>
+    </section>
+    <section class="panel form-panel password-panel" id="security"><h2>Change password</h2><p>Choose a strong password that you do not use elsewhere.</p>
+        <form action="{{ url_for('change_password') }}" method="post" class="light-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Current password<input name="current_password" type="password" autocomplete="current-password" required></label>
+            <label>New password<input name="new_password" type="password" autocomplete="new-password" required><small>12+ characters with uppercase, lowercase, a number and a symbol.</small></label>
+            <label>Confirm new password<input name="confirm_password" type="password" autocomplete="new-password" required></label>
+            <button class="button button-secondary" type="submit">Update password</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

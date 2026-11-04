@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Overview · EmotionAI{% endblock %}
+{% block page_label %}Overview{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div><p class="eyebrow">YOUR WORKSPACE</p><h1>Welcome back, {{ current_user.full_name.split()[0] }}</h1><p>Here is an overview of your emotion detection activity.</p></div>
+    <a class="button button-primary" href="{{ url_for('detect') }}"><i data-lucide="scan-face"></i>Start new detection</a>
+</div>
+<section class="stats-grid">
+    <article class="stat-card"><span class="stat-icon violet"><i data-lucide="layers-3"></i></span><p>Total sessions</p><strong>{{ data.session_count }}</strong><small>Detection sessions</small></article>
+    <article class="stat-card"><span class="stat-icon blue"><i data-lucide="scan"></i></span><p>Faces analyzed</p><strong>{{ data.face_count }}</strong><small>Across your sessions</small></article>
+    <article class="stat-card"><span class="stat-icon cyan"><i data-lucide="sparkles"></i></span><p>Most detected</p><strong class="stat-word">{{ data.most_common }}</strong><small>Your top expression</small></article>
+    <article class="stat-card"><span class="stat-icon green"><i data-lucide="clock-3"></i></span><p>Last detection</p><strong class="stat-date">{{ data.last_detection.strftime('%b %d') if data.last_detection else '—' }}</strong><small>{{ data.last_detection.strftime('%I:%M %p') if data.last_detection else 'No activity yet' }}</small></article>
+</section>
+<section class="content-grid">
+    <article class="panel chart-panel">
+        <div class="panel-title"><div><h2>Emotion distribution</h2><p>Expressions from your recorded predictions</p></div><a href="{{ url_for('analytics') }}">View analytics <i data-lucide="arrow-up-right"></i></a></div>
+        {% if data.detection_count %}<div class="chart-wrap"><canvas id="emotion-chart" aria-label="Emotion distribution chart"></canvas></div>{% else %}<div class="empty-state"><i data-lucide="chart-no-axes-column-increasing"></i><strong>No analytics yet</strong><span>Start a detection session to see your emotion distribution.</span></div>{% endif %}
+    </article>
+    <article class="panel activity-panel">
+        <div class="panel-title"><div><h2>Activity this week</h2><p>Daily recorded predictions</p></div></div>
+        {% if data.detection_count %}<div class="chart-wrap chart-wrap-small"><canvas id="activity-chart" aria-label="Weekly detection activity chart"></canvas></div>{% else %}<div class="empty-state compact"><span>Your activity will appear here after your first detection.</span></div>{% endif %}
+    </article>
+</section>
+<section class="panel recent-panel">
+    <div class="panel-title"><div><h2>Recent detections</h2><p>Your latest predictions</p></div><a href="{{ url_for('history') }}">Full history <i data-lucide="arrow-up-right"></i></a></div>
+    {% if data.recent %}
+    <div class="table-wrap"><table><thead><tr><th>Expression</th><th>Confidence</th><th>Date and time</th></tr></thead><tbody>
+    {% for item in data.recent %}<tr><td><span class="emotion-tag">{{ item.detected_emotion|title }}</span></td><td>{{ '%.1f'|format(item.confidence_score * 100) }}%</td><td>{{ item.detection_timestamp.strftime('%b %d, %Y · %I:%M %p') }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="empty-state compact"><span>No detections recorded yet.</span><a href="{{ url_for('detect') }}">Start your first session</a></div>{% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+{% if data.detection_count %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script><script>
+window.dashboardCharts = {{ {'emotions': data.emotion_counts, 'activity': data.activity}|tojson }};
+</script><script src="{{ url_for('static', filename='dashboard.js', v='20261104') }}" defer></script>{% endif %}
+{% endblock %}
