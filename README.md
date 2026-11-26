@@ -2,20 +2,20 @@
 
 A local-only web application for real-time face emotion detection using Flask, TensorFlow, and OpenCV. Perfect for running on your local machine!
 
-## 🌟 Features
+##  Features
 
-- 🎭 Real-time emotion detection from webcam
-- 🌐 Web-based interface accessible from your local browser
-- 🎨 Clean, modern UI with landing page
-- 📊 Detects 7 emotions: Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise
-- 🔐 Optional account and role-management backend
-- 📈 Personal dashboards, detection history, and analytics
-- 🛡️ Administrator account management
-- 🚀 Error handling and logging
-- 📱 Mobile responsive design
-- 💻 Local-only application - runs on your computer
+-  Real-time emotion detection from webcam
+-  Web-based interface accessible from your local browser
+-  Clean, modern UI with landing page
+-  Detects 7 emotions: Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise
+-  Optional account and role-management backend
+-  Personal dashboards, detection history, and analytics
+-  Administrator account management
+-  Error handling and logging
+-  Mobile responsive design
+-  Local-only application - runs on your computer
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Local Development
 
@@ -53,14 +53,14 @@ The command prompts for the administrator's name, username, email, and password.
 
 **Note:** This is a local-only application designed to run on your computer. You can also access it from other devices on your local network using `http://YOUR_IP:5000`
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Backend**: Flask (Python web framework)
 - **ML Model**: Keras/TensorFlow CNN
 - **Computer Vision**: OpenCV with Haar Cascade face detection
 - **Frontend**: HTML5, CSS3, JavaScript
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 .
@@ -90,7 +90,7 @@ The command prompts for the administrator's name, username, email, and password.
     └── test/               # Testing dataset
 ```
 
-## 🎯 Usage
+## Usage
 
 1. Open the landing page and select **Start detection**.
 2. Allow browser camera access.
@@ -114,7 +114,7 @@ Example secret generation in PowerShell:
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 The application runs on `http://localhost:5000` by default. To change the port, edit `app.py`:
 
@@ -122,7 +122,7 @@ The application runs on `http://localhost:5000` by default. To change the port, 
 port = int(os.environ.get('PORT', 5000))  # Change 5000 to your preferred port
 ```
 
-## 🔧 Development
+## Development
 
 ### Install Dependencies
 ```bash
@@ -164,7 +164,7 @@ Training runs on the available TensorFlow device and may take a long time on CPU
 Candidate model files and test metrics are written to `training_output/`; the model
 currently used by the app is not overwritten.
 
-## 📊 Model Information
+## Model Information
 
 - **Architecture**: Convolutional Neural Network (CNN)
 - **Input Size**: 48x48 grayscale images
@@ -172,13 +172,13 @@ currently used by the app is not overwritten.
 - **Framework**: Keras with TensorFlow backend
 - **Face Detection**: Haar Cascade Classifier
 
-## 🔒 Security Features
+## Security Features
 
 - ✅ Error handling and logging
 - ✅ Input validation
 - ✅ Secure local configuration
 
-## 📝 API Endpoints
+## API Endpoints
 
 - `GET /` - Public landing page
 - `GET /signup`, `GET /login` - Redirect to the public landing page (no auth screens)
@@ -211,7 +211,7 @@ Response:
 }
 ```
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Camera Not Working
 - Ensure your browser has camera permissions enabled
@@ -239,7 +239,7 @@ taskkill /PID <PID> /F
 lsof -ti:5000 | xargs kill -9
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
@@ -247,22 +247,22 @@ lsof -ti:5000 | xargs kill -9
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is for educational purposes.
 
-## 👥 Authors
+## Authors
 
-- *Rinku*
+- *Yogeshwar*
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - TensorFlow and Keras teams
 - OpenCV community
 - Flask framework
 - Dataset contributors
 
-## 📞 Support
+## Support
 
 For issues and questions:
 - Review logs for error messages
@@ -270,7 +270,7 @@ For issues and questions:
 - Verify Python packages are installed correctly
 - Make sure model files (`emotiondetector.json` and `emotiondetector.h5`) exist
 
-## 📝 Notes
+## Notes
 
 - The app streams video frames processed with emotion detection
 - Detection works best with good lighting and clear facial visibility
@@ -279,6 +279,6 @@ For issues and questions:
 
 ---
 
-**Made with ❤️ using Flask, TensorFlow, and OpenCV**
+**Made with using Flask, TensorFlow, and OpenCV**
 
 **Local-only application for personal use and development! 🎉**
